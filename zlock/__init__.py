@@ -1,14 +1,17 @@
 import os
 import time
+import logging
 
 from gevent.lock import Semaphore
 from contextlib import contextmanager
 from weakref import WeakValueDictionary
 
-from azrpc import ZRPC
+from azrpc import AZRPC
+
+logger = logging.getLogger(__name__)
 
 
-class ZLockRPC(ZRPC):
+class ZLockRPC(AZRPC):
     def get_client_address(self, target):
         if target is None:
             target = 'localhost'
@@ -46,11 +49,15 @@ def _get_lock(name, try_=False):
                 yield False
                 return
     with lock.sema:
+        logger.info('%s: Acquired')
         yield True
-        # Wait forever, the client will send a CLI_CANCEL message or will be
-        # timed out
-        while True:
-            time.sleep(60)
+        try:
+            # Wait forever, the client will send a CLI_CANCEL message or will be
+            # timed out
+            while True:
+                time.sleep(60)
+        finally:
+            logger.info('%s: Released')
 
 @rpc.register('zlock.is_locked')
 def _is_locked(name):

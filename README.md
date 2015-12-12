@@ -1,3 +1,3 @@
 # ZLock
 
-A disturbed locking system based on ZRPC.
+A disturbed locking system based on AZRPC.
