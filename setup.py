@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='zlock',
-    version='0.0.2',
+    version='0.0.3',
     url='https://github.com/max0d41/zlock',
     description='A disturbed locking system based on ZRPC.',
     packages=[

@@ -4,7 +4,7 @@ import logging
 from gevent import GreenletExit, Timeout
 from gevent.lock import Semaphore
 from contextlib import contextmanager
-from weakref import WeakValueDictionary
+from weakref import WeakValueDictionary, WeakSet
 
 from azrpc import AZRPC, AZRPCTimeout
 
@@ -20,13 +20,18 @@ rpc = AZRPC('zlock', ZLOCK_PORT, heartbeat_timeout=HEARTBEAT_TIMEOUT)
 
 # Server code
 
-_global_lock = Semaphore()
-_locks = WeakValueDictionary()
+global_lock = Semaphore()
+locks = WeakValueDictionary()
+waiting = WeakSet()
 
 
 class MySemaphore(object):
     def __init__(self):
         self.sema = Semaphore()
+
+
+class Waiter(object):
+    pass
 
 
 stats = {
@@ -45,19 +50,22 @@ stats = {
 @rpc.register
 def _get_lock(name, try_=False):
     stats['requests'] += 1
-    with _global_lock:
-        if name not in _locks:
+    with global_lock:
+        if name not in locks:
             lock = MySemaphore()
-            _locks[name] = lock
+            locks[name] = lock
         else:
-            lock = _locks[name]
+            lock = locks[name]
             if try_ and lock.sema.locked():
                 stats['taken'] += 1
                 yield False
                 return
     logger.debug('%s: Trying to acquire', name)
     try:
+        waiter = Waiter()
+        waiting.add(waiter)
         with lock.sema:
+            del waiter
             stats['acquired'] += 1
             logger.info('%s: Acquired', name)
             try:
@@ -85,10 +93,10 @@ def _get_lock(name, try_=False):
 
 @rpc.register('zlock.is_locked')
 def _is_locked(name):
-    with _global_lock:
-        if name not in _locks:
+    with global_lock:
+        if name not in locks:
             return False
-        lock = _locks[name]
+        lock = locks[name]
     return lock.sema.locked()
 
 

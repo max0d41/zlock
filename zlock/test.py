@@ -5,21 +5,12 @@ import time
 import logging
 import unittest
 
-from uuid import uuid4
 from gevent.pool import Group
 
 from azrpc import AZRPCServer
 
 from . import Lock, get_lock, is_locked, rpc
 
-uuid = uuid4().get_hex()
-
-"""print uuid, 1
-with get_lock('foo'):
-    print uuid, 2, is_locked('foo')
-    print uuid, 2, is_locked.execute(None, 'foo')
-print uuid, 3
-"""
 
 class Test(unittest.TestCase):
     def tassert(self, g, gw, result, value):

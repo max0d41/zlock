@@ -4,5 +4,5 @@ RUN apk add --update python libstdc++ python-dev py-setuptools ca-certificates b
     mkdir /zlock/zlock && touch /zlock/zlock/__init__.py && \
     python /zlock/setup.py develop && rm -rf /zlock && \
     apk del --purge python-dev py-setuptools ca-certificates build-base && rm -rf /var/cache/apk/*
-COPY zlock/__main__.py zlock/__init__.py /zlock/
+COPY zlock/__main__.py zlock/__init__.py zlock/test.py /zlock/
 CMD python -m zlock
