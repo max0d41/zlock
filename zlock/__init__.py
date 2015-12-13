@@ -11,11 +11,11 @@ from azrpc import AZRPC, AZRPCTimeout
 logger = logging.getLogger(__name__)
 
 
-LISTEN_PORT = int(os.environ.get('LISTEN_PORT', 47001))
 DEFAULT_TARGET = os.environ.get('ZLOCK_MASTER', None)
+ZLOCK_PORT = int(os.environ.get('ZLOCK_PORT', 47001))
 HEARTBEAT_TIMEOUT = int(os.environ.get('HEARTBEAT_TIMEOUT', 10))
 
-rpc = AZRPC('zlock', LISTEN_PORT, heartbeat_timeout=HEARTBEAT_TIMEOUT)
+rpc = AZRPC('zlock', ZLOCK_PORT, heartbeat_timeout=HEARTBEAT_TIMEOUT)
 
 
 # Server code
