@@ -23,11 +23,11 @@ def main():
         while True:
             logger.info(
                 'Stats: '
-                '{waiting} waiting, {active} active / '
-                '{requests} requests ({taken} taken, '
-                '{acquired} acquired, {released} released, '
-                '{timeout} timeout, {unexpected} unexpected) / '
-                '{failed} failed, {failed_timeout} failed_timeout / '
+                '{requests} requests, '
+                '{waiting} waiting, {active} active, '
+                '{taken} taken, {acquired} acquired, {released} released, '
+                '{timeout} timeout, {unexpected} unexpected, '
+                '{failed} failed, {failed_timeout} failed_timeout, '
                 '{exceptions} exceptions'.format(active=len(locks), waiting=len(waiting), **stats))
             sleep(STATS_INTERVAL)
     except KeyboardInterrupt:

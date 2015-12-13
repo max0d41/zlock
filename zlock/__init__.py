@@ -56,10 +56,10 @@ def _get_lock(name, try_=False):
             locks[name] = lock
         else:
             lock = locks[name]
-            if try_ and lock.sema.locked():
-                stats['taken'] += 1
-                yield False
-                return
+    if try_ and lock.sema.locked():
+        stats['taken'] += 1
+        yield False
+        return
     logger.debug('%s: Trying to acquire', name)
     try:
         waiter = Waiter()
@@ -67,22 +67,22 @@ def _get_lock(name, try_=False):
         with lock.sema:
             del waiter
             stats['acquired'] += 1
-            logger.info('%s: Acquired', name)
+            logger.debug('%s: Acquired', name)
             try:
                 while True:
                     yield True
             except (GeneratorExit, GreenletExit):
                 stats['released'] += 1
-                logger.info('%s: Released', name)
+                logger.debug('%s: Released', name)
             except AZRPCTimeout:
                 stats['timeout'] += 1
-                logger.warning('%s: Timed out', name)
+                logger.info('%s: Timed out', name)
             else:
                 stats['unexpected'] += 1
                 logger.warning('%s: Released without error', name)
     except (GeneratorExit, GreenletExit):
         stats['failed'] += 1
-        logger.info('%s: Released', name)
+        logger.warning('%s: Released before getting lock', name)
     except AZRPCTimeout:
         stats['failed_timeout'] += 1
         logger.warning('%s: Timed out before getting lock', name)
