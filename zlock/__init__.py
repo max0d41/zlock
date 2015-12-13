@@ -36,7 +36,8 @@ class Waiter(object):
 
 stats = {
     'requests': 0,
-    'taken': 0,
+    'already_locked': 0,
+    'try_failed': 0,
     'acquired': 0,
     'released': 0,
     'timeout': 0,
@@ -56,10 +57,12 @@ def _get_lock(name, try_=False):
             locks[name] = lock
         else:
             lock = locks[name]
-    if try_ and lock.sema.locked():
-        stats['taken'] += 1
-        yield False
-        return
+    if lock.sema.locked():
+        stats['already_locked'] += 1
+        if try_:
+            stats['try_failed'] += 1
+            yield False
+            return
     logger.debug('%s: Trying to acquire', name)
     try:
         waiter = Waiter()

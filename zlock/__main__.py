@@ -23,9 +23,9 @@ def main():
         while True:
             logger.info(
                 'Stats: '
-                '{requests} requests, '
+                '{requests} requests, {already_locked} already_locked, '
                 '{waiting} waiting, {active} active, '
-                '{taken} taken, {acquired} acquired, {released} released, '
+                '{try_failed} try_failed, {acquired} acquired, {released} released, '
                 '{timeout} timeout, {unexpected} unexpected, '
                 '{failed} failed, {failed_timeout} failed_timeout, '
                 '{exceptions} exceptions'.format(active=len(locks), waiting=len(waiting), **stats))
