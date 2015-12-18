@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 STATS_INTERVAL = int(os.environ.get('STATS_INTERVAL', 10))
 
+
 def main():
     logging.basicConfig(level=logging.INFO)
     AZRPCServer(rpc)

@@ -94,6 +94,7 @@ def _get_lock(name, try_=False):
         logger.exception('Exception at lock %s', name)
         raise
 
+
 @rpc.register('zlock.is_locked')
 def _is_locked(name):
     with global_lock:
@@ -146,7 +147,8 @@ class Lock(object):
         return self.acquire()
 
     def __exit__(self, type, value, traceback):
-        self.release()
+        if self.got:
+            self.release()
 
 
 @contextmanager
@@ -157,6 +159,7 @@ def get_lock(name, try_=False, target=DEFAULT_TARGET):
     lock = Lock(name, try_, target=target)
     with lock as got_lock:
         yield got_lock
+
 
 def locked(name, target=DEFAULT_TARGET):
     return _is_locked.execute(target, name)
