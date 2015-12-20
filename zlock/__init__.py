@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 
 DEFAULT_TARGET = os.environ.get('ZLOCK_MASTER', None)
-ZLOCK_PORT = int(os.environ.get('ZLOCK_PORT', 47001))
+ZLOCK_LISTEN_PORT = int(os.environ.get('ZLOCK_LISTEN_PORT', 47001))
 HEARTBEAT_TIMEOUT = int(os.environ.get('HEARTBEAT_TIMEOUT', 10))
 
-rpc = AZRPC('zlock', ZLOCK_PORT, heartbeat_timeout=HEARTBEAT_TIMEOUT)
+rpc = AZRPC('zlock', ZLOCK_LISTEN_PORT, heartbeat_timeout=HEARTBEAT_TIMEOUT)
 
 
 # Server code

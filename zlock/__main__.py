@@ -8,7 +8,7 @@ from gevent import sleep
 
 from azrpc import AZRPCServer
 
-from . import ZLOCK_PORT, rpc, stats, locks, waiting
+from . import ZLOCK_LISTEN_PORT, rpc, stats, locks, waiting
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ STATS_INTERVAL = int(os.environ.get('STATS_INTERVAL', 10))
 def main():
     logging.basicConfig(level=logging.INFO)
     AZRPCServer(rpc)
-    logger.info('Listening on port %s', ZLOCK_PORT)
+    logger.info('Listening on port %s', ZLOCK_LISTEN_PORT)
     try:
         while True:
             logger.info(
